@@ -10,6 +10,9 @@ public class CourseType {
     public CourseType mRequired = null;
 
     public String toString() {
+        if (mName == null) {
+            return "-";
+        }
         return mName;
     }
 }

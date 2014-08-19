@@ -83,7 +83,7 @@ public class EPBTypeEdit extends BasePanel implements ButtonListener, ComboListe
         mButtonSave.setVisible(false);
         addButton(mButtonSave);
 
-        mButtonStatus = new BaseButton("Desabilitar", "button_deactivate", STATUS_BUTTON, BaseButton.POS_TYPE.LEFT, this);
+        mButtonStatus = new BaseButton("Desabilitar", "button_deactivate", STATUS_BUTTON, BaseButton.POS_TYPE.RIGHT, this);
         mButtonStatus.setVisible(false);
         addButton(mButtonStatus);
         mountPanel();
@@ -110,9 +110,9 @@ public class EPBTypeEdit extends BasePanel implements ButtonListener, ComboListe
                 item.mEnd = selected.mEnd;
 
                 if (DAOCourseType.update(item) == null) {
-                    JOptionPane.showMessageDialog(this, "Não foi possível alterar o Tipo de Encontro.\nPor favor reinicie a aplicação.", "Falha na criação", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Não foi possível alterar o Tipo de Curso.\nPor favor reinicie a aplicação.", "Falha na criação", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Tipo de Encontro alterado com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Tipo de Curso alterado com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                     clearFields();
 
                     List<CourseType> list = DAOCourseType.getCourseList(false);
@@ -152,9 +152,9 @@ public class EPBTypeEdit extends BasePanel implements ButtonListener, ComboListe
             }
 
             if (DAOCourseType.update(item) == null) {
-                JOptionPane.showMessageDialog(this, "Não foi possível alterar o Tipo de Encontro.\nPor favor reinicie a aplicação.", "Falha na criação", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Não foi possível alterar o Tipo de Curso.\nPor favor reinicie a aplicação.", "Falha na criação", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Tipo de Encontro alterado com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Tipo de Curso alterado com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 clearFields();
 
                 List<CourseType> list = DAOCourseType.getCourseList(false);

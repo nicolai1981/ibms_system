@@ -85,6 +85,22 @@ public class BasePanel extends JPanel {
                         separator.setBounds(posX, posY, separator.mWidth, separator.mHeight);
                         add(separator);
                         posX += separator.mWidth;
+                    } else if (component instanceof BaseButton) {
+                        BaseButton button = (BaseButton) component;
+                        if (lineHeight < button.mHeight) {
+                            lineHeight = button.mHeight;
+                        }
+                        button.setBounds(posX, posY, button.mWidth, button.mHeight);
+                        add(button);
+                        posX += button.mWidth;
+                    } else if (component instanceof BaseCheckBox) {
+                        BaseCheckBox checkBox = (BaseCheckBox) component;
+                        if (lineHeight < checkBox.mHeight) {
+                            lineHeight = checkBox.mHeight;
+                        }
+                        checkBox.setBounds(posX, posY, checkBox.mWidth, checkBox.mHeight);
+                        add(checkBox);
+                        posX += checkBox.mWidth;
                     }
                     posX += COMPONENT_MARGIN;
                 }
@@ -139,6 +155,10 @@ public class BasePanel extends JPanel {
                 } else if (component instanceof BaseComboBox) {
                     BaseComboBox combo = (BaseComboBox) component;
                     combo.setSelectedIndex(0);
+
+                } else if (component instanceof BaseCheckBox) {
+                    BaseCheckBox checkBox = (BaseCheckBox) component;
+                    checkBox.setSelected(false);
                 }
             }
         }

@@ -142,15 +142,30 @@ public class FrameHome extends JFrame {
         menuItem.setFont(BaseConstant.FONT_BOLD_12);
         menu.add(menuItem);
 
+        // Curso
         subMenu = new JMenu("Curso");
         subMenu.setFont(BaseConstant.FONT_BOLD_12);
         menu.add(subMenu);
 
         menuItem = new JMenuItem("Novo");
         menuItem.setFont(BaseConstant.FONT_BOLD_12);
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                setPanel(new EPBCourseNew());
+            }
+        });
         subMenu.add(menuItem);
 
         menuItem = new JMenuItem("Editar");
+        menuItem.setFont(BaseConstant.FONT_BOLD_12);
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                setPanel(new EPBCourseEdit());
+            }
+        });
+        subMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Gerenciar");
         menuItem.setFont(BaseConstant.FONT_BOLD_12);
         subMenu.add(menuItem);
 
@@ -162,6 +177,7 @@ public class FrameHome extends JFrame {
         menuItem.setFont(BaseConstant.FONT_BOLD_12);
         subMenu.add(menuItem);
 
+        // Tipo de curso
         subMenu = new JMenu("Tipo de Curso");
         subMenu.setFont(BaseConstant.FONT_BOLD_12);
         menu.add(subMenu);

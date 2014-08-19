@@ -17,12 +17,32 @@ public class BaseButton extends JButton {
     public static final int HEIGHT = 35;
     public final int mTag;
     public final POS_TYPE mPos;
+    public final int mHeight;
+    public final int mWidth;
     private final ButtonListener mlistener;
 
     public BaseButton(String text, String icon, int tag, POS_TYPE pos, ButtonListener listener) {
         super(text);
         mTag = tag;
         mPos = pos;
+        mlistener = listener;
+        mHeight = HEIGHT;
+        mWidth = WIDTH;
+        setFont(BaseConstant.FONT_BOLD_12);
+        setIcon(new ImageIcon(BaseButton.class.getResource("/com/ito/ibms/resources/" + icon + ".png")));
+        addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                mlistener.onClick(mTag);
+            }
+        });
+    }
+
+    public BaseButton(String text, String icon, int tag, int height, int width, ButtonListener listener) {
+        super(text);
+        mTag = tag;
+        mPos = POS_TYPE.LEFT;
+        mHeight = height;
+        mWidth = width;
         mlistener = listener;
         setFont(BaseConstant.FONT_BOLD_12);
         setIcon(new ImageIcon(BaseButton.class.getResource("/com/ito/ibms/resources/" + icon + ".png")));
