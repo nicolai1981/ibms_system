@@ -92,6 +92,38 @@ public class DAOCourseType {
         return result;
     }
 
+    public static boolean delete(int id) {
+        boolean result = false;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            Connection connection = DBConector.getConnection();
+            statement = connection.createStatement();
+            String cmd = "DELETE FROM TIPO_CURSO WHERE _ID=" + id;
+            statement.execute(cmd);
+
+            cmd = "SELECT * FROM TIPO_CURSO WHERE _ID=" + id;
+            statement.execute(cmd);
+            resultSet = statement.getResultSet();
+            if ((resultSet == null) || !resultSet.next()) {
+                result = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return result;
+    }
+
     public static CourseType findById(int id) {
         CourseType result = null;
         Statement statement = null;
@@ -105,6 +137,34 @@ public class DAOCourseType {
             resultSet = statement.getResultSet();
             if ((resultSet != null) && resultSet.next()) {
                 result = DAOCourseType.fromCursor(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
+
+    public static boolean isRequired(int id) {
+        boolean result = false;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            Connection connection = DBConector.getConnection();
+            statement = connection.createStatement();
+            String cmd = "SELECT * FROM TIPO_CURSO WHERE REQUISITO=" + id;
+            statement.execute(cmd);
+            resultSet = statement.getResultSet();
+            if ((resultSet != null) && resultSet.next()) {
+                result = true;
             }
         } catch (SQLException e) {
             e.printStackTrace();

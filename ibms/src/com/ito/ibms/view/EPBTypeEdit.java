@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import com.ito.ibms.db.DAOCourse;
 import com.ito.ibms.db.DAOCourseType;
 import com.ito.ibms.db.model.CourseType;
 import com.ito.ibms.view.component.BaseButton;
@@ -61,11 +62,13 @@ public class EPBTypeEdit extends BasePanel implements ButtonListener, ComboListe
         addLine();
         mFieldName = new BaseEdit(null, 500, BaseEdit.TYPE.EDIT, "Nome");
         mFieldName.mCheckType = BaseEdit.CHECK_FILLED;
+        mFieldName.setEnabled(false);
         addComponent(mFieldName);
 
         list = DAOCourseType.getCourseList(true);
         list.add(0, none);
         mFieldRequired = new BaseComboBox(list.toArray(), 500, BaseComboBox.TYPE.EDIT, "Pré-requisito", 0, null);
+        mFieldRequired.setEnabled(false);
         addComponent(mFieldRequired);
 
         addLine();
@@ -135,26 +138,47 @@ public class EPBTypeEdit extends BasePanel implements ButtonListener, ComboListe
             }
         } else if (tag == STATUS_BUTTON) {
             setEnabledFields(false);
-            CourseType selected = (CourseType)mFieldTypeList.getSelectedItem();
-            CourseType item = new CourseType();
+            boolean cmdResult = false;
 
-            item.mId = selected.mId;
-            item.mName = selected.mName;
-            item.mRequired = selected.mRequired;
-            item.mStart = selected.mStart;
-            item.mEnd = selected.mEnd;
-            if (item.mEnd.getTime() == -62135758800000L) {
-                FrameHome.getInstance().setInfo("Desativando tipo de curso", true);
-                item.mEnd = Calendar.getInstance().getTime();
+            CourseType selected = (CourseType)mFieldTypeList.getSelectedItem();
+
+            if ((selected.mEnd.getTime() == -62135758800000L) && (DAOCourse.getNextVersion(selected.mId) == 1)
+                && !DAOCourseType.isRequired(selected.mId)) {
+                // Delete
+                FrameHome.getInstance().setInfo("Removendo tipo de curso", true);
+
+                if (DAOCourseType.delete(selected.mId)) {
+                    JOptionPane.showMessageDialog(this, "Tipo de Curso removido com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                    cmdResult = true;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Não foi possível remover o Tipo de Curso.\nPor favor reinicie a aplicação.", "Falha na criação", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                item.mEnd.setTime(-62135758800000L);
-                FrameHome.getInstance().setInfo("Ativando tipo de curso", true);
+                // Update
+                CourseType item = new CourseType();
+                item.mId = selected.mId;
+                item.mName = selected.mName;
+                item.mRequired = selected.mRequired;
+                item.mStart = selected.mStart;
+                item.mEnd = selected.mEnd;
+
+                if (item.mEnd.getTime() == -62135758800000L) {
+                    FrameHome.getInstance().setInfo("Desativando tipo de curso", true);
+                    item.mEnd = Calendar.getInstance().getTime();
+                } else {
+                    item.mEnd.setTime(-62135758800000L);
+                    FrameHome.getInstance().setInfo("Ativando tipo de curso", true);
+                }
+
+                if (DAOCourseType.update(item) == null) {
+                    JOptionPane.showMessageDialog(this, "Não foi possível alterar o Tipo de Curso.\nPor favor reinicie a aplicação.", "Falha na criação", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Tipo de Curso alterado com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                    cmdResult = true;
+                }
             }
 
-            if (DAOCourseType.update(item) == null) {
-                JOptionPane.showMessageDialog(this, "Não foi possível alterar o Tipo de Curso.\nPor favor reinicie a aplicação.", "Falha na criação", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Tipo de Curso alterado com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            if (cmdResult) {
                 clearFields();
 
                 List<CourseType> list = DAOCourseType.getCourseList(false);
@@ -195,6 +219,8 @@ public class EPBTypeEdit extends BasePanel implements ButtonListener, ComboListe
         if (tag == COURSE_COMBO) {
             if (mFieldTypeList.getSelectedIndex() == 0) {
                 clearFields();
+                mFieldName.setEnabled(false);
+                mFieldRequired.setEnabled(false);
                 mFieldStart.setText("-");
                 mFieldEnd.setText("-");
                 mButtonStatus.setVisible(false);
@@ -204,15 +230,24 @@ public class EPBTypeEdit extends BasePanel implements ButtonListener, ComboListe
                 if (item == null) {
                     return;
                 }
+                mFieldName.setEnabled(true);
                 mFieldName.setText(item.mName);
+
                 mFieldStart.setDate(item.mStart);
+
                 if (item.mEnd.getTime() == -62135758800000L) {
                     mFieldEnd.setText("-");
-                    mButtonStatus.changeIcon("Desativar","button_deactivate");
+                    if ((DAOCourse.getNextVersion(item.mId) == 1) && !DAOCourseType.isRequired(item.mId)) {
+                        mButtonStatus.changeIcon("Excluir","button_delete");
+                    } else {
+                        mButtonStatus.changeIcon("Desativar","button_deactivate");
+                    }
                 } else {
                     mFieldEnd.setDate(item.mEnd);
                     mButtonStatus.changeIcon("Ativar","button_activate");
                 }
+
+                mFieldRequired.setEnabled(true);
                 if (item.mRequired == null) {
                     mFieldRequired.setSelectedIndex(0);
                 } else {
